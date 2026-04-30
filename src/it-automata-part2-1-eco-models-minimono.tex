@@ -6,18 +6,15 @@
 % без этой строчки (модуль cmap) не будет работать поиск внутри документа и копирование русского текста:
 \usepackage{cmap}
 \usepackage[utf8]{inputenc}
-% чтобы работал символы евро €, × (возможно, еще какие-то другие)
-% https://tex.stackexchange.com/questions/9866/latest-advice-on-the-euro-symbol#9868
-% при этом поломается возможность выделения слов наклонным шрифтом с \textit
-% TODO: разобраться, как это исправить, пока лень
-% https://tex.stackexchange.com/questions/336155/italicization-with-textit-does-not-work#336158
-\usepackage{lmodern,textcomp}
 \usepackage[english,russian]{babel}
 
 % разбить длинные адреса URL, которые не умещаются в строку
 % https://tex.stackexchange.com/questions/54946/how-to-break-a-long-url
-\usepackage[hyphenbreaks]{breakurl}
 \usepackage[hyphens]{url}
+
+% использовать такой же шрифт в адресах \url, как в основном тексте
+% https://tex.stackexchange.com/questions/261434/changing-url-font
+\urlstyle{same}
 
 % слова с дефисом (здесь в основном - "аппаратно-программная") по умолчанию не переносятся автоматом и вылезают за пределы строки
 % чтобы этого не происходило, следует заменить дефис на команду "=
@@ -40,6 +37,40 @@
 
 \usepackage{graphicx}
 
+% нужно включить, чтобы движок понимал символы евро € и умножение ×
+% (символ фунта £ он понимает и так)
+% но чтобы символ отображался, нужен еще подходящий шрифт
+\usepackage{textcomp}
+
+% шрифт по умолчанию не поддерживает символ евро (точнее, он рисует что-то похожее, но не то, что применяется сейчас)
+% шрифт с поддержкой символа евро €, похожий на шрифт по умолчанию
+% проблема с lmodern в том, что с ним перестает работать возможность выделения слов курсивом с \textit
+% https://tex.stackexchange.com/questions/336155/italicization-with-textit-does-not-work#336158
+% https://tex.stackexchange.com/questions/82116/how-to-display-italics-with-lmodern-package
+\usepackage{lmodern}
+
+% другие шрифты с поддержкой символа евро € и курсива одновременно
+% можно использовать их, но мне не нравится их начертание, хочется оставить вариант максимально похожий на дефолт
+%\usepackage{dejavu}
+%\usepackage[scaled=0.9]{DejaVuSerif}
+%\usepackage[scaled=0.8]{DejaVuSerif}
+%\usepackage{libertine}
+%\usepackage{paratype}
+
+% использовать шрифт с поддержкой курсива для блоков \textit (блок \textit переопределяем)
+% https://latexref.xyz/_005cnewcommand-_0026-_005crenewcommand.html
+% https://tex.stackexchange.com/questions/47351/can-i-redefine-a-command-to-contain-itself
+% это нужно для шрифта lmodern, если использовать шрифты с поддержкой символа евро € и курсива, то этот хак можно выключить
+% 'cmr' - судя по всему, имя дефолтного шрифта, у него есть курсив, но нет символа евро €
+% у шрифта lmodern есть символ €, но нет курсива
+% для основного текста будем использовать lmodern, для курсива - 'cmr'
+% (с таким вариантом символ € внутри блока \textit размещать нельзя - он его нарисует по-другому)
+% внутренее имя шрифта 'cmr' узнал из ворнингов pdflatex при генерации документа с шрифтом без курсива
+% кой-какие подробности про выбор шрифта для блока текста и внутренние имена шрифтов:
+% % https://tex.stackexchange.com/questions/25249/how-do-i-use-a-particular-font-for-a-small-section-of-text-in-my-document
+\let\textitorig\textit
+\renewcommand{\textit}[1]{{\fontfamily{cmr}\selectfont \textitorig{#1}}}
+
 \title{Экономические модели распространения цифровых продуктов: нишевые технологические монополии — патенты, скрытые чемпионы, закрытое ПО, HaaS}
 \author{А.~Е.~Моисеев}
 \date{апрель 2025}
@@ -50,6 +81,10 @@
 \begin{document}
 
 \maketitle
+
+\begin{center}
+\textit{на правах рукописи}
+\end{center}
 
 \section*{\raggedright{Компенсация стоимости разработки аппаратно-программных устройств из экономического эффекта}}
 
